@@ -95,15 +95,14 @@ def load_bin_vec(fname, vocab):
         binary_len = np.dtype(theano.config.floatX).itemsize * layer1_size
         for line in xrange(vocab_size):
             word = []
-            while True:
-                ch = f.read(1)
-                if ch == ' ':
-                    word = ''.join(word)
-                    break
-                if ch != '\n':
-                    word.append(ch)
-            if word in vocab:
-               word_vecs[word] = np.fromstring(f.read(binary_len), dtype=theano.config.floatX)
+            ch = f.read(1)
+            if ch == ' ':
+                word = ''.join(word)
+                break
+            if ch != '\n':
+                word.append(ch)
+            if tuple(word) in vocab:
+               word_vecs[tuple(word)] = np.fromstring(f.read(binary_len), dtype=theano.config.floatX)
             else:
                 f.read(binary_len)
     return word_vecs
@@ -177,6 +176,6 @@ if __name__=="__main__":
     add_unknown_words(rand_vecs, vocab)
     W2, _ = get_W(rand_vecs)
     mairesse = get_mairesse_features(mairesse_file)
-    cPickle.dump([revs, W, W2, word_idx_map, vocab, mairesse], open("essays_mairesse.p", "wb"))
+    cPickle.dump([revs, W, W2, word_idx_map, vocab, mairesse], open("essays_mairesse_test.p", "wb"))
     print "dataset created!"
 
