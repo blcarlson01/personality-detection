@@ -22,6 +22,7 @@ import sys
 import time
 import getpass
 import csv
+from conv_net_classes_gpu import LeNetConvPoolLayer,MLPDropout
 
 
 warnings.filterwarnings("ignore")
@@ -90,10 +91,10 @@ def train_conv_net(datasets,
     print(parameters)
 
     # define model architecture
-    index = T.lscalar()
+    index = T.iscalar()
     x = T.tensor3('x', dtype=theano.config.floatX)
     y = T.ivector('y')
-    mair = T.dmatrix('mair')
+    mair = T.matrix('mair')
     Words = theano.shared(value=U, name="Words")
     zero_vec_tensor = T.vector(dtype=theano.config.floatX)
     zero_vec = np.zeros(img_w, dtype=theano.config.floatX)
@@ -460,10 +461,10 @@ if __name__ == "__main__":
     exec (open("conv_net_classes_gpu.py").read())
     if word_vectors == "-rand":
         print("using: random vectors")
-        U = W2
+        U = np.float32(W2)
     elif word_vectors == "-word2vec":
         print("using: word2vec vectors")
-        U = W
+        U = np.float32(W)
 
     r = range(0, 10)
 
