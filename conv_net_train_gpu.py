@@ -22,8 +22,7 @@ import sys
 import time
 import getpass
 import csv
-from conv_net_classes_gpu import LeNetConvPoolLayer,MLPDropout
-
+from conv_net_classes_gpu import LeNetConvPoolLayer, MLPDropout
 
 warnings.filterwarnings("ignore")
 
@@ -452,6 +451,7 @@ if __name__ == "__main__":
     # mode = "-static"
     # word_vectors = "-word2vec"
     # attr = int("2")
+    print ("attr: " + str(attr))
     if mode == "-nonstatic":
         print("model architecture: CNN-non-static")
         non_static = True
