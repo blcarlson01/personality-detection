@@ -72,7 +72,7 @@ fastmath=True
 
 ## Training
 
-Note: Before these changes, every epoche took about 5 hours to complete. After them, it took less than an hour on CPU and about 45s on GPU (Improvements depend on your system spec)
+Note: Before these changes, every epoch took about 5 hours to complete. After them, it took less than an hour on CPU and about 45s on GPU (Improvements depend on your system spec)
 
 A. **Running on GPU**
 
