@@ -11,10 +11,11 @@ This code implements the model discussed in [Deep Learning-Based Document Modeli
 
 ## Requirements
 
+-   Ubuntu 16.0.4 64bit (Tested)
 -   Python 2.7
--   Theano 0.7 (Tested)
--   Pandas 18.0 (Tested)
--   Pre-trained [GoogleNews word2vec](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit) vector
+-   Theano 1.0.4 (Tested)
+-   Pandas 0.24.2 (Tested)
+-   Pre-trained [GoogleNews word2vec](https://drive.google.com/file/d/0B7XkCwpI5KDYNlNUTTlSS21pQmM/edit) vector (If you are using ssh try [this](https://s3.amazonaws.com/dl4j-distribution/GoogleNews-vectors-negative300.bin.gz))
 
 
 ## Preprocessing
@@ -33,10 +34,55 @@ Example:
 python process_data.py ./GoogleNews-vectors-negative300.bin ./essays.csv ./mairesse.csv
 ```
 
+## Configuration for training the model
+
+A. **Running using CPU**
+1. Configure ~./theanorc:
+```sh
+[global]
+floatX=float64
+OMP_NUM_THREADS=20
+openmp=True
+```
+
+B. **Running using GPU**
+1. Install [libgpuarray](http://deeplearning.net/software/libgpuarray/installation.html)
+2. Install [cuDNN](http://deeplearning.net/software/theano/library/sandbox/cuda/dnn.html) for faster training
+3. Add CUDA path to .bashrc:
+```sh
+export CUDA_HOME=/usr/local/cuda
+export LD_LIBRARY_PATH=${CUDA_HOME}/lib64
+PATH=${CUDA_HOME}/bin:${PATH}
+
+export PATH
+```
+4. Configure ~/.theanorc:
+```sh
+[cuda]
+root=/usr/local/cuda
+[global]
+device=cuda
+floatX = float32
+OMP_NUM_THREADS=20
+openmp=True
+
+[nvcc]
+fastmath=True
+```
 
 ## Training
 
-`conv_net_train.py` trains and tests the model. It requires three command-line arguments:
+Note: Before these changes, every epoche took about 5 hours to complete. After them, it took less than an hour on CPU and about 45s on GPU (Improvements depend on your system spec)
+
+A. **Running on GPU**
+
+`conv_net_train_gpu.py` trains and tests the model using GPU.(Alternatively, you can run "run.sh" and train all traits using word2vec at once)
+
+B. **Running on CPU**
+
+`conv_net_train.py` trains and tests the model using CPU.
+
+Both scripts require three command-line arguments:
 
 1.  **Mode:**
     -   `-static`: word embeddings will remain fixed
@@ -54,7 +100,7 @@ python process_data.py ./GoogleNews-vectors-negative300.bin ./essays.csv ./maire
 Example:
 
 ```sh
-python conv_layer_train.py -static -word2vec 2
+python conv_net_train.py -static -word2vec 2
 ```
 
 
