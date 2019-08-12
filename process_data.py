@@ -5,7 +5,7 @@ from collections import defaultdict
 import sys, re
 import pandas as pd
 import csv
-import getpass
+from gensim.models import KeyedVectors
 
 
 def build_data_cv(datafile, cv=10, clean_string=True):
@@ -89,24 +89,14 @@ def load_bin_vec(fname, vocab):
     Loads 300x1 word vecs from Google (Mikolov) word2vec
     """
     word_vecs = {}
-    with open(fname, "rb") as f:
-        header = f.readline()
-        vocab_size, layer1_size = map(int, header.split())
-        binary_len = np.dtype(theano.config.floatX).itemsize * layer1_size
-        for line in xrange(vocab_size):
-            word = []
-            ch = f.read(1)
-            if ch == ' ':
-                word = ''.join(word)
-                break
-            if ch != '\n':
-                word.append(ch)
-            if tuple(word) in vocab:
-               word_vecs[tuple(word)] = np.fromstring(f.read(binary_len), dtype=theano.config.floatX)
-            else:
-                f.read(binary_len)
+    model = KeyedVectors.load_word2vec_format(fname, binary=True)
+    for word in vocab:
+        try:
+            word_vecs[word] = model.get_vector(word)
+        except KeyError:
+            # Word not in the vocabulary
+            pass
     return word_vecs
-
 def add_unknown_words(word_vecs, vocab, min_df=1, k=300):
     """
     For words that occur in at least min_df documents, create a separate word vector.
@@ -176,6 +166,6 @@ if __name__=="__main__":
     add_unknown_words(rand_vecs, vocab)
     W2, _ = get_W(rand_vecs)
     mairesse = get_mairesse_features(mairesse_file)
-    cPickle.dump([revs, W, W2, word_idx_map, vocab, mairesse], open("essays_mairesse_test.p", "wb"))
+    cPickle.dump([revs, W, W2, word_idx_map, vocab, mairesse], open("essays_mairesse.p", "wb"))
     print "dataset created!"
 
