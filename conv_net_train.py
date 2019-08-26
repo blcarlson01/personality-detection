@@ -445,12 +445,12 @@ if __name__ == "__main__":
     x = cPickle.load(open("essays_mairesse.p", "rb"))
     revs, W, W2, word_idx_map, vocab, mairesse = x[0], x[1], x[2], x[3], x[4], x[5]
     print("data loaded!")
-    # mode = sys.argv[1]
-    # word_vectors = sys.argv[2]
-    # attr = int(sys.argv[3])
-    mode = "-static"
-    word_vectors = "-word2vec"
-    attr = int("2")
+    mode = sys.argv[1]
+    word_vectors = sys.argv[2]
+    attr = int(sys.argv[3])
+#     mode = "-static"
+#     word_vectors = "-word2vec"
+#     attr = int("2")
     if mode == "-nonstatic":
         print("model architecture: CNN-non-static")
         non_static = True
