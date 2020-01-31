@@ -69,10 +69,10 @@ class Generator(Sequence):
                to_categorical(batch_y, num_classes=2)
 
 
-def get_checkpoints(model_dir):
-    saved_checkpoints = [f for f in os.listdir(model_dir) if f.startswith('model-' + model_name)]
-    saved_checkpoints.sort(reverse=True)
-    return saved_checkpoints
+# def get_checkpoints(model_dir):
+#     saved_checkpoints = [f for f in os.listdir(model_dir) if f.startswith('model-' + model_name)]
+#     saved_checkpoints.sort(reverse=True)
+#     return saved_checkpoints
 
 
 def train_conv_net(datasets, W, historyfile, iteration,
@@ -148,31 +148,35 @@ def train_conv_net(datasets, W, historyfile, iteration,
     test_data_G = Generator(X_test, mairesse_test, y_test, batch_size, W, sent_max_count, word_max_count,
                             embbeding_size)
 
-    model_dir = 'models/results/' + model_name + '/' + str(iteration)
-    checkpoint_path = model_dir + "/model-" + model_name + '-' + str(iteration) + "-{acc:02f}.hdf5"
-    # Keep only a single checkpoint, the best over test accuracy.
-    checkpoint = ModelCheckpoint(str(checkpoint_path),
-                                 monitor='acc',
-                                 verbose=1)
-    saved_checkpoints = get_checkpoints(model_dir)
-    if len(saved_checkpoints) > 0:
-        last_checkpoint = saved_checkpoints[0]
-        logging.info("Resume training from " + last_checkpoint)
-        final_model.load_weights(model_dir + '/' + last_checkpoint)
-    else:
-        logging.info("Traning from scratch!")
-    logging.info(len(X_train) / batch_size)
+    # model_dir = 'models/results/' + model_name + '/' + str(iteration)
+    # checkpoint_path = model_dir + "/model-" + model_name + '-' + str(iteration) + "-{acc:02f}.hdf5"
+    # # Keep only a single checkpoint, the best over test accuracy.
+    # checkpoint = ModelCheckpoint(str(checkpoint_path),
+    #                              monitor='acc',
+    #                              verbose=1)
+    # saved_checkpoints = get_checkpoints(model_dir)
+    # if len(saved_checkpoints) > 0:
+    #     last_checkpoint = saved_checkpoints[0]
+    #     logging.info("Resume training from " + last_checkpoint)
+    #     final_model.load_weights(model_dir + '/' + last_checkpoint)
+    # else:
+    #     logging.info("Traning from scratch!")
+    # logging.info(len(X_train) / batch_size)
 
     history = History()
 
     final_model.fit_generator(train_data_G, validation_data=val_data_G, steps_per_epoch=len(X_train) / batch_size,
                               validation_steps=len(X_validation) / batch_size, epochs=n_epochs,
-                              callbacks=[my_logger, history, checkpoint])
-    logging.info("loading best model weights")
-    saved_checkpoints = get_checkpoints(model_dir)
-    last_checkpoint = saved_checkpoints[0]
-    logging.info("Resume weights from " + last_checkpoint)
-    final_model.load_weights(model_dir + '/' + last_checkpoint)
+                              callbacks=[my_logger, history])
+
+    # final_model.fit_generator(train_data_G, validation_data=val_data_G, steps_per_epoch=len(X_train) / batch_size,
+    #                           validation_steps=len(X_validation) / batch_size, epochs=n_epochs,
+    #                           callbacks=[my_logger, history, checkpoint])
+    # logging.info("loading best model weights")
+    # saved_checkpoints = get_checkpoints(model_dir)
+    # last_checkpoint = saved_checkpoints[0]
+    # logging.info("Resume weights from " + last_checkpoint)
+    # final_model.load_weights(model_dir + '/' + last_checkpoint)
     logging.info("evaluating model...")
     loss, acc = final_model.evaluate_generator(test_data_G, steps=len(datasets[0]) / batch_size)
     hist = str(history.history)
