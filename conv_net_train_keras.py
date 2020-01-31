@@ -273,7 +273,7 @@ if __name__ == "__main__":
     revs, W, W2, word_idx_map, vocab, mairesse = x[0], x[1], x[2], x[3], x[4], x[5]
     logging.info("data loaded!")
     try:
-        attr = int(sys.argv[0])
+        attr = int(sys.argv[1])
     except IndexError:
         attr = 4
 
