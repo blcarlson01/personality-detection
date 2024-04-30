@@ -298,7 +298,7 @@ def refresh_epochs():
         return None
 
     try:
-        n = int(f.readline().strip())
+        n = int(f.readline(5_000_000).strip())
     except Exception:
         f.close()
         return None
