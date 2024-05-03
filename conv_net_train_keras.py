@@ -26,7 +26,8 @@ class TestCallback(keras.callbacks.Callback):
     def __init__(self, test_data):
         self.test_data = test_data
 
-    def on_epoch_end(self, epoch, logs={}):
+    def on_epoch_end(self, epoch, logs=None):
+        logs = {} if logs is None else logs
         if epoch % 5 == 0:
             test_data, step_size = self.test_data
             loss, acc = self.model.evaluate_generator(test_data, steps=step_size)
@@ -37,7 +38,8 @@ class MyLogger(keras.callbacks.Callback):
     def __init__(self, n):
         self.n = n  # logging.info loss & acc every n epochs
 
-    def on_epoch_end(self, epoch, logs={}):
+    def on_epoch_end(self, epoch, logs=None):
+        logs = {} if logs is None else logs
         if epoch % self.n == 0:
             curr_loss = logs.get('loss')
             curr_acc = logs.get('acc') * 100

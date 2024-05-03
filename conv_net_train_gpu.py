@@ -54,15 +54,15 @@ def train_conv_net(datasets,
                    cv=0,
                    attr=0,
                    img_w=300,
-                   filter_hs=[3, 4, 5],
-                   hidden_units=[100, 2],
-                   dropout_rate=[0.5],
+                   filter_hs=None,
+                   hidden_units=None,
+                   dropout_rate=None,
                    shuffle_batch=True,
                    n_epochs=25,
                    batch_size=50,
                    lr_decay=0.95,
                    conv_non_linear="relu",
-                   activations=[Iden],
+                   activations=None,
                    sqr_norm_lim=9,
                    non_static=True):
     """
@@ -74,6 +74,10 @@ def train_conv_net(datasets,
     sqr_norm_lim = s^2 in the paper
     lr_decay = adadelta decay parameter
     """
+    filter_hs = [3, 4, 5] if filter_hs is None else filter_hs
+    hidden_units = [100, 2] if hidden_units is None else hidden_units
+    dropout_rate = [0.5] if dropout_rate is None else dropout_rate
+    activations = [Iden] if activations is None else activations
     rng = np.random.RandomState(3435)
     img_h = len(datasets[0][0][0])
     filter_w = img_w
@@ -298,7 +302,7 @@ def refresh_epochs():
         return None
 
     try:
-        n = int(f.readline(5_000_000).strip())
+        n = int(f.readline().strip())
     except Exception:
         f.close()
         return None
