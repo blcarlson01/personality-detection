@@ -45,8 +45,8 @@ class MyLogger(keras.callbacks.Callback):
             curr_acc = logs.get('acc') * 100
             val_loss = logs.get('val_loss')
             val_acc = logs.get('val_acc')
-            logging.info("epoch = %4d  loss = %0.6f  acc = %0.2f%%" % (epoch, curr_loss, curr_acc))
-            logging.info("epoch = %4d  val_loss = %0.6f  val_acc = %0.2f%%" % (epoch, val_loss, val_acc))
+            logging.info("epoch = %4d  loss = %0.6f  acc = %0.2f%%", epoch, curr_loss, curr_acc)
+            logging.info("epoch = %4d  val_loss = %0.6f  val_acc = %0.2f%%", epoch, val_loss, val_acc)
 
 
 class Generator(Sequence):
@@ -184,7 +184,7 @@ def train_conv_net(datasets, W, historyfile, iteration,
     hist = str(history.history)
     pickle.dump(hist, historyfile)
 
-    logging.info('score = ' + str(loss) + "," + str(acc))
+    logging.info("score = %s,%s", str(loss), str(acc))
     return loss, acc
 
 def make_input_batch(X_train, W, sent_max_count, word_max_count, embbeding_size):
@@ -304,7 +304,7 @@ if __name__ == "__main__":
 
     results = []
     for i in r:
-        logging.info("iteration = %4d from %4d " % (i, len(r)))
+        logging.info("iteration = %4d from %4d ", i, len(r))
         datasets = make_idx_data_cv(revs, word_idx_map, mairesse, charged_words, i, attr, max_l=149,
                                     max_s=312, k=300,
                                     filter_h=3)
