@@ -280,39 +280,38 @@ if __name__ == "__main__":
         attr = 4
 
     r = range(0, 10)
+    with open('perf_output_' + model_name + "_" + str(attr) + '_w2v.txt', 'w') as ofile:
 
-    ofile = open('perf_output_' + model_name + "_" + str(attr) + '_w2v.txt', 'w')
+        charged_words = []
 
-    charged_words = []
+        emof = open("Emotion_Lexicon.csv", "rt")
+        history_file_name = 'history_' + model_name + '_attr_' + str(attr) + '_w2v.txt'
+        historyfile = open(history_file_name, 'wb')
+        csvf = csv.reader(emof, delimiter=',', quotechar='"')
+        first_line = True
 
-    emof = open("Emotion_Lexicon.csv", "rt")
-    history_file_name = 'history_' + model_name + '_attr_' + str(attr) + '_w2v.txt'
-    historyfile = open(history_file_name, 'wb')
-    csvf = csv.reader(emof, delimiter=',', quotechar='"')
-    first_line = True
+        for line in csvf:
+            if first_line:
+                first_line = False
+                continue
+            if line[11] == "1":
+                charged_words.append(line[0])
 
-    for line in csvf:
-        if first_line:
-            first_line = False
-            continue
-        if line[11] == "1":
-            charged_words.append(line[0])
+        emof.close()
 
-    emof.close()
+        charged_words = set(charged_words)
 
-    charged_words = set(charged_words)
+        results = []
+        for i in r:
+            logging.info("iteration = %4d from %4d " % (i, len(r)))
+            datasets = make_idx_data_cv(revs, word_idx_map, mairesse, charged_words, i, attr, max_l=149,
+                                        max_s=312, k=300,
+                                        filter_h=3)
 
-    results = []
-    for i in r:
-        logging.info("iteration = %4d from %4d " % (i, len(r)))
-        datasets = make_idx_data_cv(revs, word_idx_map, mairesse, charged_words, i, attr, max_l=149,
-                                    max_s=312, k=300,
-                                    filter_h=3)
+            results = train_conv_net(datasets, W, historyfile, i)
+            ofile.write(str(results) + "\n")
+            ofile.flush()
 
-        results = train_conv_net(datasets, W, historyfile, i)
-        ofile.write(str(results) + "\n")
-        ofile.flush()
-
-    ofile.write(str(results))
+        ofile.write(str(results))
     historyfile.close()
 
